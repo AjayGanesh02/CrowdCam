@@ -1,6 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable from "formidable";
+import { formidable } from "formidable";
 import fs from "fs";
 
 // export const main = async () => {
@@ -35,33 +35,29 @@ export default async function handler(
   request: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  const form = new formidable.IncomingForm();
-  form.parse(request, async (err, fields, files) => {
+  const form = formidable({});
+  // await new Promise((resolve, reject) => {
+  form.parse(request, async (err, _fields, files) => {
     if (err) {
       return res.status(500).json({ message: err.message });
     }
+    console.log(`parsed ${JSON.stringify(files)}`);
+    const client = new S3Client({
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+      },
+    });
 
-    const client = new S3Client({});
-
-    //     const { files: fileArray } = files;
-    const { filearray } = files;
-    if (!files) {
-      return res
-        .status(400)
-        .json({ message: "No files uploaded or invalid file array." });
-    }
-    //   if (!fileArray || !Array.isArray(fileArray)) {
-    //     return res.status(400).json({ message: 'No files uploaded or invalid file array.' });
-    //   }
-
-    // if (files) {
-    // try {
+    const filearray = files["files"];
+    console.log(filearray);
     await Promise.all(
       (filearray || []).map(async (file) => {
+        console.log("file 1: " + file.filepath);
         const fileStream = fs.createReadStream(file.filepath);
 
         const params = {
-          Bucket: "YOUR_S3_BUCKET_NAME",
+          Bucket: "arn:aws:s3:::crowdcamimages",
           Key: `uploads/${file.newFilename}`,
           Body: fileStream,
         };
@@ -71,26 +67,11 @@ export default async function handler(
         return client.send(command);
       })
     );
+    res.status(200).send({ message: "uploaded" });
     // } catch (error) {
     //   // Handle the error
     // }
     // }
-
-    const data: any = await new Promise((resolve, reject) => {
-      form.parse(request, (err, fields, files) => {
-        if (err) reject({ err });
-
-        resolve({ err, fields, files });
-      });
-    });
-
-    // const data = request.body;
-    // const data = await request.formData();
-
-    //return the data back or just do whatever you want with it
-    res.status(200).json({
-      message: "ok",
-    });
   });
 }
 
