@@ -1,35 +1,27 @@
-import fs from 'fs-extra';
-import formidable from 'formidable';
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+import { S3Client } from "@aws-sdk/client-s3";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export async function POST(request: Request) {
+  const { filename, contentType, eventId } = await request.json();
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const form = new formidable.IncomingForm();
+  try {
+    const client = new S3Client({ region: process.env.AWS_REGION });
+    // const { url, fields } = await createPresignedPost(client, {
+    //   Bucket: process.env.AWS_BUCKET_NAME || "",
+    //   Key: Date.now() + "-" + eventId,
+    //   Conditions: [
+    //     ["content-length-range", 0, 10485760], // up to 10 MB
+    //     ["starts-with", "$Content-Type", contentType],
+    //   ],
+    //   Fields: {
+    //     acl: "public-read",
+    //     "Content-Type": contentType,
+    //   },
+    //   Expires: 600, // Seconds before the presigned post expires. 3600 by default.
+    // });
 
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        return res.status(500).json({ error: 'Error uploading file.' });
-      }
-
-      const { image } = files;
-
-      if (!image) {
-        return res.status(400).json({ error: 'No file uploaded.' });
-      }
-
-      const fileName = image.name;
-      const filePath = `public/uploads/${fileName}`;
-
-      await fs.move(image.path, filePath);
-
-      return res.status(200).json({ success: true, filePath });
-    });
-  } else {
-    res.status(405).json({ error: 'Method Not Allowed' });
+    // return Response.json({ url, fields });
+  } catch (error: any) {
+    return Response.json({ error: error.message });
   }
 }
