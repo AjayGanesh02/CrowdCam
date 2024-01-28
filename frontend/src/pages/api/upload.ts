@@ -52,55 +52,16 @@ export default async function handler(
 
     await checkAndCreateCollection(eventid);
 
-    for (const file of filearray) {
-      console.log("======================================================");
-      const filekey = `${file.newFilename}${file.originalFilename}`;
-      await uploadToS3(bucket, file.filepath, filekey);
-      const faceRecords = await indexFaces(eventid, {
-        Bucket: bucket,
-        Name: filekey,
-      });
-      //   let faceIds = faceRecords?.map((faceRecord) => {
-      //     return faceRecord.Face?.FaceId ?? "FUCKYOU";
-      //   });
-      //   if (!faceIds) return;
-
-      //   const userIds = await listUsers(eventid);
-
-      //   if (!userIds) {
-      //     console.log("Creating new user for each face found");
-      //     await Promise.all(
-      //       faceIds.map((faceId) => {
-      //         return createUser(eventid, faceId + file.originalFilename);
-      //       })
-      //     );
-      //   } else {
-      //     console.log("Matching face with existing users");
-
-      //     for (const userId of userIds) {
-      //       if (faceIds.length == 0) {
-      //         break;
-      //       }
-      //       const assfaces = await associateFaces(eventid, userId, faceIds);
-      //       console.log(
-      //         assfaces.AssociatedFaces,
-      //         assfaces.UnsuccessfulFaceAssociations,
-      //         assfaces.UserStatus
-      //       );
-      //       faceIds = assfaces.UnsuccessfulFaceAssociations.map(
-      //         (unsuc) => unsuc.FaceId
-      //       );
-      //     }
-
-      //     let unassocFaceIds: Set<string> = new Set();
-
-      //     await Promise.all(
-      //       faceIds.map((faceId) => {
-      //         return createUser(eventid, faceId + file.originalFilename);
-      //       })
-      //     );
-      //   }
-    }
+    await Promise.all(
+      filearray.map(async (file) => {
+        const filekey = `${file.newFilename}${file.originalFilename}`;
+        await uploadToS3(bucket, file.filepath, filekey);
+        return indexFaces(eventid, {
+          Bucket: bucket,
+          Name: filekey,
+        });
+      })
+    );
 
     // async function createUser(CollectionId: string, UserId: string) {
     //   try {

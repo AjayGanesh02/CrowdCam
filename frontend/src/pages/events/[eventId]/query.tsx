@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { saveAs } from "file-saver"
 import ImageUpload from "@/components/upload-image";
+import Image from "next/image";
 
 const QueryPage = () => {
-
   const [queryResults, setQueryResults] = useState<string[]>([]);
-  const [ active, setActive ] = useState("");
+  const [active, setActive] = useState("");
 
   useEffect(() => {
-    if(queryResults.length > 0) {
+    if (queryResults.length > 0) {
       setActive(queryResults[0]);
     }
   }, [queryResults]);
 
   return (
-    <main
+    <div
       className={
         "min-h-screen h-auto overscroll-none bg-gradient-to-t from-black to-[#292F36] text-center"
       }
@@ -72,7 +72,7 @@ const QueryPage = () => {
             </>
         }
       </div>
-    </main>
+    </div>
   );
 };
 
