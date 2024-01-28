@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 
 import ImageUpload from "@/components/upload-image";
-import { useProfileImage } from "@/contexts/ProfileContext";
-import { useRouter } from "next/router";
 import Image from "next/image";
 
 const QueryPage = () => {
@@ -16,7 +14,7 @@ const QueryPage = () => {
   }, [queryResults]);
 
   return (
-    <main
+    <div
       className={
         "h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36] text-center"
       }
@@ -49,13 +47,16 @@ const QueryPage = () => {
               </div>
               <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
                 {queryResults?.map((imgelink, index) => (
-                  <div key={index}>
+                  <div
+                    key={index}
+                    className="h-20 w-max-full cursor-pointer rounded-lg relative"
+                  >
                     <Image
                       onClick={() => setActive(imgelink)}
                       src={imgelink}
-                      className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
+                      className="object-cover rounded-md"
                       alt="gallery-image"
-                      width=
+                      fill={true}
                     />
                   </div>
                 ))}
@@ -64,7 +65,7 @@ const QueryPage = () => {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 };
 

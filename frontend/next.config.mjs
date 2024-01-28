@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        
-    }
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "crowdcamimages.s3.amazonaws.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
