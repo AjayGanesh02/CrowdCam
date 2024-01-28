@@ -52,7 +52,7 @@ export default async function handler(
 
     await checkAndCreateCollection(eventid);
 
-    return await Promise.all(
+    await Promise.all(
       filearray.map(async (file) => {
         const filekey = `${file.newFilename}${file.originalFilename}`;
         await uploadToS3(bucket, file.filepath, filekey);
@@ -62,6 +62,8 @@ export default async function handler(
         });
       })
     );
+
+    return res.status(200).json({ message: "finished uploading" });
 
     // async function createUser(CollectionId: string, UserId: string) {
     //   try {
