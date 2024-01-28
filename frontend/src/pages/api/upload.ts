@@ -7,6 +7,7 @@ import {
   ListUsersCommand,
   AssociateFacesCommand,
   CreateUserCommand,
+  Face,
 } from "@aws-sdk/client-rekognition";
 import { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
@@ -54,9 +55,10 @@ export default async function handler(
     const bucket = "crowdcamimages";
 
     await checkAndCreateCollection(eventid);
-    console.log(filearray);
+    // console.log(filearray);
 
-    (filearray || []).forEach(async (file) => {
+    for (const file of filearray) {
+        console.log("======================================================")
       const filekey = `${file.newFilename}${file.originalFilename}`;
       await uploadToS3(bucket, file.filepath, filekey);
       const faceRecords = await indexFaces(eventid, {
@@ -71,17 +73,25 @@ export default async function handler(
       const userIds = await listUsers(eventid);
 
       if (!userIds) {
+        console.log("Creating new user for each face found")
         await Promise.all(
           faceIds.map((faceId) => {
-            return createUser(eventid, faceId);
+            return createUser(eventid, faceId + file.originalFilename);
           })
         );
       } else {
-        let assocReturns = await Promise.all(
-          userIds.map((userId) => {
-            return associateFaces(eventid, userId, faceIds);
-          })
-        );
+        console.log("Matching face with existing users")
+        // let assocReturns = await Promise.all(
+        //   userIds.map((userId) => {
+        //     return associateFaces(eventid, userId, faceIds);
+        //   })
+        // );
+        let assocReturns: any[] = [];
+        for (const userId of userIds) {
+            const res = await associateFaces(eventid, userId, faceIds);
+            console.log(res.AssociatedFaces, res.UnsuccessfulFaceAssociations, res.UserStatus);
+            assocReturns.push(res);
+        }
         assocReturns = assocReturns.filter((element) => element !== undefined)!;
 
         let unassocFaceIds: Set<string> = new Set();
@@ -93,38 +103,33 @@ export default async function handler(
 
         await Promise.all(
           Array.from(unassocFaceIds).map((faceId) => {
-            return createUser(eventid, faceId);
+            return createUser(eventid, faceId + file.originalFilename);
           })
         );
       }
-      // get list of users in collection
-      // for each user, try to associate faces to users, using unsuccessfulassociates for the next user
-      // create new users for each face left after running through all users
-    });
+    }
 
     async function createUser(CollectionId: string, UserId: string) {
       try {
+        console.log(`Creating user: ${UserId} in ${CollectionId}`);
         await rekogclient.send(new CreateUserCommand({ CollectionId, UserId }));
       } catch (error) {
         console.error("Error creating user:", error);
       }
     }
 
-    async function associateFaces(
-      CollectionId: string,
-      UserId: string,
-      FaceIds: string[]
-    ) {
-      try {
-        const params = {
-          CollectionId,
-          UserId,
-          FaceIds,
-        };
-        return await rekogclient.send(new AssociateFacesCommand(params));
-      } catch (error) {
-        console.error("Error associating faces:", error);
-      }
+    async function associateFaces( CollectionId: string, UserId: string, FaceIds: string[]) {
+        console.log("Associating for", UserId, FaceIds)
+        try {
+            const params = {
+                CollectionId,
+                UserId,
+                FaceIds,
+            };
+            return await rekogclient.send(new AssociateFacesCommand(params));
+        } catch (error) {
+            console.error("Error associating faces:", error);
+        }
     }
 
     async function listUsers(CollectionId: string) {
@@ -141,11 +146,11 @@ export default async function handler(
           const userIds = data.Users.map(
             (user) => user.UserId ?? "WHEREISYOURUSERID"
           );
-          console.log("Users in collection:", userIds);
+          console.log(`Users in collection ${CollectionId}:`, userIds);
           return userIds;
         } else {
           console.log("No users found in the collection.");
-          return [];
+          return;
         }
       } catch (error) {
         // Log any errors that occur during the operation
@@ -162,7 +167,7 @@ export default async function handler(
       };
       try {
         const data = await client.send(new PutObjectCommand(params));
-        console.log("File uploaded successfully, etag: ", data.ETag);
+        // console.log("File uploaded successfully, etag: ", data.ETag);
         // await indexFaces(eventid, {Bucket: bucket, Name: key})
       } catch (error) {
         console.error("Error uploading file to S3:", error);
@@ -187,7 +192,7 @@ export default async function handler(
         );
         if (FaceRecords && FaceRecords.length > 0) {
           console.log(
-            `Faces indexed for ${S3image.Name}: ${JSON.stringify(FaceRecords)}`
+            `Faces indexed for ${S3image.Name}: ${JSON.stringify(FaceRecords.map((faceRecord) => {return {"id": faceRecord.Face?.FaceId, "s3": faceRecord.Face?.ExternalImageId}}))}`
           );
         } else {
           console.log(`No faces found for ${S3image.Name}.`);

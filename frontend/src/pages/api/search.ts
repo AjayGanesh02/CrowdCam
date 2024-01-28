@@ -1,7 +1,10 @@
 import formidable from "formidable";
 import {
+  ListFacesCommand,
+  ListUsersCommand,
   RekognitionClient,
   SearchFacesByImageCommand,
+  SearchUsersByImageCommand,
 } from "@aws-sdk/client-rekognition";
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
@@ -33,7 +36,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const rekogclient = new RekognitionClient(creds);
 
     const results = await rekogclient.send(
-      new SearchFacesByImageCommand({
+      new SearchUsersByImageCommand({
         CollectionId: "SpartaHacks9",
         Image: {
           Bytes: fs.readFileSync(parsed.filepath),
@@ -41,12 +44,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       })
     );
 
+    const UserIds = results.UserMatches?.map((match) => { return match.User?.UserId!; });
     res.json({
-      matches:
-        results.FaceMatches?.map((match) => {
-          return `https://crowdcamimages.s3.amazonaws.com/${match.Face
-            ?.ExternalImageId!}`;
-        }) || [],
+      matches: await rekogclient.send(
+        new ListFacesCommand({
+          CollectionId: "SpartaHacks9",
+          UserId: JSON.stringify(UserIds)
+        })
+      )
+
+        // results.FaceMatches?.map((match) => {
+        //   return `https://crowdcamimages.s3.amazonaws.com/${match.Face
+        //     ?.ExternalImageId!}`;
+        // }) || [],
     });
   });
 }
