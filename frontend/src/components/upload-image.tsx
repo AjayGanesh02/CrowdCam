@@ -27,7 +27,6 @@ const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
         if (search) {
           var res = await response.json();
           setter(res);
-          // console.log(res)
         }
       } else {
         console.error("Error uploading files:", response.statusText);
@@ -42,11 +41,7 @@ const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
       <div className={"h-48 justify-center max-w-96 mx-auto"}>
         <FileUploader
           handleChange={(files: any) => {
-            var filesArr = []
-            for (const [key, value] of Object.entries(files)) {
-              filesArr.push(value)
-            }
-            handleFileUpload(filesArr)
+            handleFileUpload(Object.values(files));
           }}
           name="file"
           types={["JPG", "PNG", "JPEG"]}
