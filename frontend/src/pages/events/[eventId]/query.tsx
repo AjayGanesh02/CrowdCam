@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { saveAs } from "file-saver"
 import ImageUpload from "@/components/upload-image";
 
 const QueryPage = () => {
@@ -16,7 +16,7 @@ const QueryPage = () => {
   return (
     <main
       className={
-        "min-h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36] text-center"
+        "min-h-screen h-auto overscroll-none bg-gradient-to-t from-black to-[#292F36] text-center"
       }
     >
       <div className={"text-3xl pt-8 px-8 text-[#BFD7FF] font-bold"}>
@@ -38,30 +38,38 @@ const QueryPage = () => {
             </div>
           )
             :
-            <div className={"flex px-10"}>
-              <div className="grid gap-4 mx-auto">
-
-                <div className="flex items-center max-h-[480px]">
-                  <img
-                    className="rounded-lg object-contain mx-auto h-[480px] sm:h-[480px]"
-                    src={active}
-                    alt=""
-                  />
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
-                  {queryResults?.map((imgelink, index) => (
-                    <div key={index}>
-                      <img
-                        onClick={() => setActive(imgelink)}
-                        src={imgelink}
-                        className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
-                        alt="gallery-image"
-                      />
-                    </div>
-                  ))}
+            <>
+              <div className={"flex px-10"}>
+                <div className="grid gap-4 mx-auto">
+                  <div className="flex items-center max-h-[480px]">
+                    <img
+                      className="rounded-lg object-contain mx-auto h-[480px] sm:h-[480px]"
+                      src={active}
+                      alt=""
+                    />
+                  </div>
+                  <div className={"text-blue-500 underline"}
+                       onClick={() => {
+                         saveAs(active, "CrowdCamPicture.png");
+                       }}
+                  >
+                    Download Image Here
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
+                    {queryResults?.map((imgelink, index) => (
+                      <div key={index}>
+                        <img
+                          onClick={() => setActive(imgelink)}
+                          src={imgelink}
+                          className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
+                          alt="gallery-image"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
         }
       </div>
     </main>
