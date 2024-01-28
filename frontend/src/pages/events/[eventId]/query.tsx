@@ -22,7 +22,7 @@ const QueryPage = () => {
       }
     >
       <div className={"text-3xl pt-8 px-8 text-[#BFD7FF] font-bold"}>
-        <p>Profile Page</p>
+        <p>Query {queryResults.length > 0 ? "Results" : "Page"}</p>
       </div>
       <div className={"mt-12"}>
         {queryResults.length == 0 ? (

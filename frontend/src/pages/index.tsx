@@ -2,6 +2,7 @@ import Image from "next/image";
 import ImageUpload from "@/components/upload-image";
 import Logo from "../../public/logo.svg";
 import {useRouter} from "next/router";
+import query from "@/pages/events/[eventId]/query";
 
 export default function Home() {
 
@@ -33,7 +34,7 @@ export default function Home() {
           <div>
             <button
               className={"text-white border w-80 py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 mt-16 text-lg"}
-              onClick={() => {router.push('/query')}}
+              onClick={() => {router.push({pathname: '/events', query: {type: "query"}})}}
             >
               Find Yourself
             </button>
@@ -41,7 +42,7 @@ export default function Home() {
           <div>;
             <button
               className={"text-white border w-80 py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 text-lg mt-12"}
-              onClick={() => {router.push('/events')}}
+              onClick={() => {router.push({pathname: '/events', query: {type: "upload"}})}}
             >
               Help Others
             </button>
