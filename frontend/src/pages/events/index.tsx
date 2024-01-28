@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { kv } from "@vercel/kv";
 
-type EventType = {
+export type EventType = {
   eventId: string;
   name: string;
   date: string;
@@ -32,8 +32,9 @@ const EventsPage = ({ events }: { events: EventType[] }) => {
 
           {/* event clickables */}
           <div className={"grid grid-cols-1 lg:grid-cols-2 place-items-center"}>
-            {events.map((event) => (
+            {events.map((event, idx) => (
               <div
+                key={idx}
                 className={
                   "border border-gray-700 mt-10 w-full max-w-96 rounded-md p-2"
                 }
@@ -78,7 +79,7 @@ const EventsPage = ({ events }: { events: EventType[] }) => {
 };
 
 export const getServerSideProps = async () => {
-  const events = await kv.json.get("events");
+  const events: EventType[] = await kv.json.get("events");
   return { props: { events } };
 };
 

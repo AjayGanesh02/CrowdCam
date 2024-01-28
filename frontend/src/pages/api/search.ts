@@ -47,12 +47,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           return `https://crowdcamimages.s3.amazonaws.com/${match.Face
             ?.ExternalImageId!}`;
         }) ?? [];
+      console.log(JSON.stringify(matches));
 
       return res.status(200).json({
         matches: matches,
         error: matches.length == 0 ? "No Matches" : null,
       });
     } catch (e: any) {
+      console.log(e);
       return res.status(200).json({
         matches: [],
         error: "No Face In Original Image",

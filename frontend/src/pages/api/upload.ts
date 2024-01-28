@@ -145,6 +145,6 @@ export default async function handler(
         console.error("Error creating collection:", error);
       }
     }
+    return res.status(200).json({ message: "finished uploading" });
   });
-  return res.status(200).json({ message: "finished uploading" });
 }
