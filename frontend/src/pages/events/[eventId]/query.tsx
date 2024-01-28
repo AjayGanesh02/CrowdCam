@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { saveAs } from "file-saver";
-import ImageUpload from "@/components/upload-image";
-import { useRouter } from "next/router";
+
 import Image from "next/image";
+import ImageUpload from "@/components/upload-image";
+import { saveAs } from "file-saver";
+import { useRouter } from "next/router";
 
 const QueryPage = () => {
+  const [ prompt, setPrompt ] = useState<string>("We don't have an image for you. Please upload one!");
   const [queryResults, setQueryResults] = useState<string[]>([]);
   const [active, setActive] = useState("");
   const router = useRouter();
@@ -28,13 +30,19 @@ const QueryPage = () => {
         {queryResults.length == 0 ? (
           <div>
             <p className={"text-white my-8 px-4"}>
-              We don&apos;t have an image for you. Please upload one!
+              {prompt}
             </p>
             <ImageUpload
               search={true}
               begun={() => {}}
               setter={(reply: any) => {
-                setQueryResults(reply.matches);
+                console.log(reply);
+                if (reply.error) {
+                  setPrompt(`${ reply.error }. Please try again.`);
+                }
+                else {
+                  setQueryResults(reply.matches);
+                }
               }}
               eventId={
                 typeof router.query.eventId == "string"
