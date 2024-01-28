@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "react-dom": "^18.2.0",
-    "react-photo-gallery": "^8.0.0",
-    "react-responsive-carousel": "^3.2.23",
-    "react-viewer": "^3.2.2"
-  }
-}

@@ -1,3 +1,4 @@
 frontend/.env
 .env
 **/.env
+node_modules/
