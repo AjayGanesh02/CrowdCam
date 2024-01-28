@@ -51,15 +51,15 @@ export default async function handler(
     const rekogclient = new RekognitionClient(creds);
     const eventid = "SpartaHacks9";
     const filearray = files["files"];
-    const bucket = "arn:aws:s3:::crowdcamimages";
+    const bucket = "crowdcamimages";
 
     await checkAndCreateCollection(eventid);
     console.log(filearray);
 
     (filearray || []).forEach(async (file) => {
-      const filekey = `${eventid}/${file.newFilename}${file.originalFilename}`;
+      const filekey = `${file.newFilename}${file.originalFilename}`;
       await uploadToS3(bucket, file.filepath, filekey);
-      const faceRecords = await indexFaces(bucket, {
+      const faceRecords = await indexFaces(eventid, {
         Bucket: bucket,
         Name: filekey,
       });
@@ -186,7 +186,9 @@ export default async function handler(
           new IndexFacesCommand(params)
         );
         if (FaceRecords && FaceRecords.length > 0) {
-          console.log(`Faces indexed for ${S3image.Name}:`);
+          console.log(
+            `Faces indexed for ${S3image.Name}: ${JSON.stringify(FaceRecords)}`
+          );
         } else {
           console.log(`No faces found for ${S3image.Name}.`);
         }
