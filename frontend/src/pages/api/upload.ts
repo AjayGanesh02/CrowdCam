@@ -4,10 +4,6 @@ import {
   IndexFacesCommand,
   ListCollectionsCommand,
   CreateCollectionCommand,
-  ListUsersCommand,
-  AssociateFacesCommand,
-  CreateUserCommand,
-  Face,
 } from "@aws-sdk/client-rekognition";
 import { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
@@ -55,108 +51,110 @@ export default async function handler(
     const bucket = "crowdcamimages";
 
     await checkAndCreateCollection(eventid);
-    // console.log(filearray);
 
     for (const file of filearray) {
-        console.log("======================================================")
+      console.log("======================================================");
       const filekey = `${file.newFilename}${file.originalFilename}`;
       await uploadToS3(bucket, file.filepath, filekey);
       const faceRecords = await indexFaces(eventid, {
         Bucket: bucket,
         Name: filekey,
       });
-      const faceIds = faceRecords?.map((faceRecord) => {
-        return faceRecord.Face?.FaceId ?? "FUCKYOU";
-      });
-      if (!faceIds) return;
+      //   let faceIds = faceRecords?.map((faceRecord) => {
+      //     return faceRecord.Face?.FaceId ?? "FUCKYOU";
+      //   });
+      //   if (!faceIds) return;
 
-      const userIds = await listUsers(eventid);
+      //   const userIds = await listUsers(eventid);
 
-      if (!userIds) {
-        console.log("Creating new user for each face found")
-        await Promise.all(
-          faceIds.map((faceId) => {
-            return createUser(eventid, faceId + file.originalFilename);
-          })
-        );
-      } else {
-        console.log("Matching face with existing users")
-        // let assocReturns = await Promise.all(
-        //   userIds.map((userId) => {
-        //     return associateFaces(eventid, userId, faceIds);
-        //   })
-        // );
-        let assocReturns: any[] = [];
-        for (const userId of userIds) {
-            const res = await associateFaces(eventid, userId, faceIds);
-            console.log(res.AssociatedFaces, res.UnsuccessfulFaceAssociations, res.UserStatus);
-            assocReturns.push(res);
-        }
-        assocReturns = assocReturns.filter((element) => element !== undefined)!;
+      //   if (!userIds) {
+      //     console.log("Creating new user for each face found");
+      //     await Promise.all(
+      //       faceIds.map((faceId) => {
+      //         return createUser(eventid, faceId + file.originalFilename);
+      //       })
+      //     );
+      //   } else {
+      //     console.log("Matching face with existing users");
 
-        let unassocFaceIds: Set<string> = new Set();
-        for (const { UnsuccessfulFaceAssociations } of assocReturns) {
-          for (const failedAssoc of UnsuccessfulFaceAssociations) {
-            unassocFaceIds.add(failedAssoc.FaceId);
-          }
-        }
+      //     for (const userId of userIds) {
+      //       if (faceIds.length == 0) {
+      //         break;
+      //       }
+      //       const assfaces = await associateFaces(eventid, userId, faceIds);
+      //       console.log(
+      //         assfaces.AssociatedFaces,
+      //         assfaces.UnsuccessfulFaceAssociations,
+      //         assfaces.UserStatus
+      //       );
+      //       faceIds = assfaces.UnsuccessfulFaceAssociations.map(
+      //         (unsuc) => unsuc.FaceId
+      //       );
+      //     }
 
-        await Promise.all(
-          Array.from(unassocFaceIds).map((faceId) => {
-            return createUser(eventid, faceId + file.originalFilename);
-          })
-        );
-      }
+      //     let unassocFaceIds: Set<string> = new Set();
+
+      //     await Promise.all(
+      //       faceIds.map((faceId) => {
+      //         return createUser(eventid, faceId + file.originalFilename);
+      //       })
+      //     );
+      //   }
     }
 
-    async function createUser(CollectionId: string, UserId: string) {
-      try {
-        console.log(`Creating user: ${UserId} in ${CollectionId}`);
-        await rekogclient.send(new CreateUserCommand({ CollectionId, UserId }));
-      } catch (error) {
-        console.error("Error creating user:", error);
-      }
-    }
+    // async function createUser(CollectionId: string, UserId: string) {
+    //   try {
+    //     console.log(`Creating user: ${UserId} in ${CollectionId}`);
+    //     await rekogclient.send(new CreateUserCommand({ CollectionId, UserId }));
+    //   } catch (error) {
+    //     console.error("Error creating user:", error);
+    //   }
+    // }
 
-    async function associateFaces( CollectionId: string, UserId: string, FaceIds: string[]) {
-        console.log("Associating for", UserId, FaceIds)
-        try {
-            const params = {
-                CollectionId,
-                UserId,
-                FaceIds,
-            };
-            return await rekogclient.send(new AssociateFacesCommand(params));
-        } catch (error) {
-            console.error("Error associating faces:", error);
-        }
-    }
+    // async function associateFaces(
+    //   CollectionId: string,
+    //   UserId: string,
+    //   FaceIds: string[]
+    // ) {
+    //   console.log("Associating for", UserId, FaceIds);
+    //   try {
+    //     const params = {
+    //       CollectionId,
+    //       UserId,
+    //       FaceIds,
+    //       UserMatchThreshold: 99,
+    //     };
+    //     return await rekogclient.send(new AssociateFacesCommand(params));
+    //   } catch (error) {
+    //     console.error("Error associating faces:", error);
+    //   }
+    // }
 
-    async function listUsers(CollectionId: string) {
-      try {
-        // Execute the ListFaces command to get a list of users in the collection
-        const data = await rekogclient.send(
-          new ListUsersCommand({
-            CollectionId,
-          })
-        );
+    // async function listUsers(CollectionId: string) {
+    //   try {
+    //     // Execute the ListFaces command to get a list of users in the collection
+    //     const data = await rekogclient.send(
+    //       new ListUsersCommand({
+    //         CollectionId,
+    //       })
+    //     );
 
-        // Log the list of faces
-        if (data.Users && data.Users.length > 0) {
-          const userIds = data.Users.map(
-            (user) => user.UserId ?? "WHEREISYOURUSERID"
-          );
-          console.log(`Users in collection ${CollectionId}:`, userIds);
-          return userIds;
-        } else {
-          console.log("No users found in the collection.");
-          return;
-        }
-      } catch (error) {
-        // Log any errors that occur during the operation
-        console.error("Error listing faces in collection:", error);
-      }
-    }
+    //     // Log the list of faces
+    //     if (data.Users && data.Users.length > 0) {
+    //       const userIds = data.Users.map(
+    //         (user) => user.UserId ?? "WHEREISYOURUSERID"
+    //       );
+    //       console.log(`Users in collection ${CollectionId}:`, userIds);
+    //       return userIds;
+    //     } else {
+    //       console.log("No users found in the collection.");
+    //       return;
+    //     }
+    //   } catch (error) {
+    //     // Log any errors that occur during the operation
+    //     console.error("Error listing faces in collection:", error);
+    //   }
+    // }
 
     async function uploadToS3(bucket: string, filepath: string, key: string) {
       const fileBuf = fs.readFileSync(filepath);
@@ -192,7 +190,14 @@ export default async function handler(
         );
         if (FaceRecords && FaceRecords.length > 0) {
           console.log(
-            `Faces indexed for ${S3image.Name}: ${JSON.stringify(FaceRecords.map((faceRecord) => {return {"id": faceRecord.Face?.FaceId, "s3": faceRecord.Face?.ExternalImageId}}))}`
+            `Faces indexed for ${S3image.Name}: ${JSON.stringify(
+              FaceRecords.map((faceRecord) => {
+                return {
+                  id: faceRecord.Face?.FaceId,
+                  s3: faceRecord.Face?.ExternalImageId,
+                };
+              })
+            )}`
           );
         } else {
           console.log(`No faces found for ${S3image.Name}.`);
