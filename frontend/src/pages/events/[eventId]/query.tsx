@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 
 import ImageUpload from "@/components/upload-image";
-import { useProfileImage } from "@/contexts/ProfileContext";
-import { useRouter } from "next/router";
 
 const QueryPage = () => {
 
