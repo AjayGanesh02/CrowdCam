@@ -9,7 +9,7 @@ const SuccessPage = () => {
       <div className={"py-auto px-4 pt-32"}>
         <div className={"text-3xl py-4 text-[#BFD7FF] font-bold text-center pb-10 px-8"}>
           <p>
-            Thanks for uploading your photo(s)! We&apos;ll let you know if we find a match.
+            Thanks for uploading your photo(s)!
           </p>
 
           <div className="w-full">
