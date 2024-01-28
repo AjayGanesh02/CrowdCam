@@ -1,10 +1,7 @@
 import formidable from "formidable";
 import {
-  ListFacesCommand,
-  ListUsersCommand,
   RekognitionClient,
   SearchFacesByImageCommand,
-  SearchUsersByImageCommand,
 } from "@aws-sdk/client-rekognition";
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";

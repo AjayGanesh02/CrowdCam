@@ -65,60 +65,6 @@ export default async function handler(
 
     return res.status(200).json({ message: "finished uploading" });
 
-    // async function createUser(CollectionId: string, UserId: string) {
-    //   try {
-    //     console.log(`Creating user: ${UserId} in ${CollectionId}`);
-    //     await rekogclient.send(new CreateUserCommand({ CollectionId, UserId }));
-    //   } catch (error) {
-    //     console.error("Error creating user:", error);
-    //   }
-    // }
-
-    // async function associateFaces(
-    //   CollectionId: string,
-    //   UserId: string,
-    //   FaceIds: string[]
-    // ) {
-    //   console.log("Associating for", UserId, FaceIds);
-    //   try {
-    //     const params = {
-    //       CollectionId,
-    //       UserId,
-    //       FaceIds,
-    //       UserMatchThreshold: 99,
-    //     };
-    //     return await rekogclient.send(new AssociateFacesCommand(params));
-    //   } catch (error) {
-    //     console.error("Error associating faces:", error);
-    //   }
-    // }
-
-    // async function listUsers(CollectionId: string) {
-    //   try {
-    //     // Execute the ListFaces command to get a list of users in the collection
-    //     const data = await rekogclient.send(
-    //       new ListUsersCommand({
-    //         CollectionId,
-    //       })
-    //     );
-
-    //     // Log the list of faces
-    //     if (data.Users && data.Users.length > 0) {
-    //       const userIds = data.Users.map(
-    //         (user) => user.UserId ?? "WHEREISYOURUSERID"
-    //       );
-    //       console.log(`Users in collection ${CollectionId}:`, userIds);
-    //       return userIds;
-    //     } else {
-    //       console.log("No users found in the collection.");
-    //       return;
-    //     }
-    //   } catch (error) {
-    //     // Log any errors that occur during the operation
-    //     console.error("Error listing faces in collection:", error);
-    //   }
-    // }
-
     async function uploadToS3(bucket: string, filepath: string, key: string) {
       const fileBuf = fs.readFileSync(filepath);
       const params = {
@@ -201,7 +147,6 @@ export default async function handler(
         console.error("Error creating collection:", error);
       }
     }
-
-    res.status(200).send({ message: "uploaded" });
   });
+  return res.send({ message: "uploaded" });
 }
