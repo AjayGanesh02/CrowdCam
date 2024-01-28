@@ -1,4 +1,3 @@
-import {MagnifyingGlassIcon} from "@heroicons/react/24/outline";
 import {useProfileImage} from "@/contexts/ProfileContext";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
