@@ -1,7 +1,8 @@
-import { useProfileImage } from "@/contexts/ProfileContext";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+
 import ImageUpload from "@/components/upload-image";
+import { useProfileImage } from "@/contexts/ProfileContext";
+import { useRouter } from "next/router";
 
 const QueryPage = () => {
 
@@ -39,16 +40,17 @@ const QueryPage = () => {
             </div>
           )
             :
-            <div className={"flex items-center text-center px-10"}>
-              <div className="grid gap-4">
-                <div>
+            <div className={"flex px-10"}>
+              <div className="grid gap-4 mx-auto">
+
+                <div className="flex items-center max-h-[480px]">
                   <img
-                    className="h-auto w-full max-w-full rounded-lg object-cover object-center md:h-[480px]"
+                    className="rounded-lg object-contain mx-auto h-[480px] sm:h-[480px]"
                     src={active}
                     alt=""
                   />
                 </div>
-                <div className="grid grid-cols-5 gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
                   {queryResults?.map((imgelink, index) => (
                     <div key={index}>
                       <img

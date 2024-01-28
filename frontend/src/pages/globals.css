@@ -7,3 +7,13 @@
 * {
     font-family: 'Inter', sans-serif;
 }
+
+label[for="file"]{
+    max-width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.sc-eqUAAy{
+    max-width: 300px;
+}
