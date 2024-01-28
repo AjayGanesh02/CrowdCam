@@ -33,6 +33,7 @@ export default function Home() {
           <div>
             <button
               className={"text-white border w-80 py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 mt-16 text-lg"}
+              onClick={() => {router.push('/profile')}}
             >
               Find Yourself
             </button>

@@ -1,4 +1,5 @@
 import { SessionProvider } from "next-auth/react"
+import { ProfileImageProvider } from "@/contexts/ProfileContext"
 import "./globals.css"
 export default function App({
                               Component,
@@ -6,7 +7,9 @@ export default function App({
                             }: any) {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <ProfileImageProvider>
+        <Component {...pageProps} />
+      </ProfileImageProvider>
     </SessionProvider>
   )
 }
