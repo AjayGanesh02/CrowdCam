@@ -34,7 +34,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const results = await rekogclient.send(
       new SearchFacesByImageCommand({
-        CollectionId: "",
+        CollectionId: "SpartaHacks9",
         Image: {
           Bytes: fs.readFileSync(parsed.filepath),
         },
@@ -44,7 +44,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.json({
       matches:
         results.FaceMatches?.map((match) => {
-          return match.Face?.ExternalImageId!;
+          return `https://crowdcamimages.s3.amazonaws.com/${match.Face
+            ?.ExternalImageId!}`;
         }) || [],
     });
   });
