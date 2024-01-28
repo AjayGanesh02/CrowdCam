@@ -9,7 +9,7 @@ const EventUploadPage = () => {
             Upload Images Here
           </p>
         </div>
-        <ImageUploadButton/>
+        <ImageUploadButton search={false} setter={(url: string) => {}}/>
       </div>
     </main>
   )

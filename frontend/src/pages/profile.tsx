@@ -1,6 +1,7 @@
 import {useProfileImage} from "@/contexts/ProfileContext";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import ImageUpload from "@/components/upload-image";
 
 
 const ProfilePage = () => {
@@ -52,14 +53,15 @@ const ProfilePage = () => {
               <p className={"text-white my-8"}>
                 We don&apos;t have an image for you. Please upload one!
               </p>
-              <button
-                className={"text-white border w-80 py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 text-lg"}
-                onClick={() => {
-                  setLocalProfileImage("https://crowdcamimages.s3.amazonaws.com/uploads/812c36650da0ab87b027f7407IMG_5179.jpg")
-                }}
-              >
-                Upload an image
-              </button>
+              <ImageUpload search={true} setter={setLocalProfileImage}/>
+              {/*<button*/}
+              {/*  className={"text-white border w-80 py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 text-lg"}*/}
+              {/*  onClick={() => {*/}
+              {/*    setLocalProfileImage("https://crowdcamimages.s3.amazonaws.com/uploads/812c36650da0ab87b027f7407IMG_5179.jpg")*/}
+              {/*  }}*/}
+              {/*>*/}
+              {/*  Upload an image*/}
+              {/*</button>*/}
             </div>
         }
       </div>
