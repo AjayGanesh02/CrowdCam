@@ -32,26 +32,32 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     console.log(`parsed ${JSON.stringify(files)} for ${eventId}`);
 
     const rekogclient = new RekognitionClient(creds);
+    try {
+      const results = await rekogclient.send(
+        new SearchFacesByImageCommand({
+          CollectionId: eventId,
+          Image: {
+            Bytes: fs.readFileSync(parsed.filepath),
+          },
+        })
+      );
 
-    const results = await rekogclient.send(
-      new SearchFacesByImageCommand({
-        CollectionId: eventId,
-        Image: {
-          Bytes: fs.readFileSync(parsed.filepath),
-        },
-      })
-    );
+      const matches =
+        results.FaceMatches?.map((match) => {
+          return `https://crowdcamimages.s3.amazonaws.com/${match.Face
+            ?.ExternalImageId!}`;
+        }) ?? [];
 
-    const matches =
-      results.FaceMatches?.map((match) => {
-        return `https://crowdcamimages.s3.amazonaws.com/${match.Face
-          ?.ExternalImageId!}`;
-      }) ?? [];
-
-    return res.status(200).json({
-      matches: matches,
-      error: matches.length == 0 ? "No Matches" : null,
-    });
+      return res.status(200).json({
+        matches: matches,
+        error: matches.length == 0 ? "No Matches" : null,
+      });
+    } catch (e: any) {
+      return res.status(200).json({
+        matches: [],
+        error: "No Face In Original Image",
+      });
+    }
   });
   return;
 }
