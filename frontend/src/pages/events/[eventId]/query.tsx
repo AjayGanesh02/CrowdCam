@@ -4,6 +4,7 @@ import Image from "next/image";
 import ImageUpload from "@/components/upload-image";
 import { saveAs } from "file-saver";
 import { useRouter } from "next/router";
+import {ArrowDownTrayIcon} from "@heroicons/react/24/outline";
 
 const QueryPage = () => {
   const [ prompt, setPrompt ] = useState<string>("We don't have an image for you. Please upload one!");
@@ -54,12 +55,15 @@ const QueryPage = () => {
           <>
             <div className={"flex px-10 pb-20 mt-4"}>
               <div className="grid gap-4 mx-auto">
-                <div className="flex items-center max-h-[480px]">
+                <div className="flex items-center max-h-[480px] relative">
                   <img
                     className="rounded-lg object-contain mx-auto h-[480px] sm:h-[480px]"
                     src={active}
                     alt=""
                   />
+                  {/*<div className={"absolute bottom-1 right-1"}>*/}
+                  {/*  <ArrowDownTrayIcon className={"w-8 text-white"}/>*/}
+                  {/*</div>*/}
                 </div>
                 <div
                   className={"text-blue-500 underline"}
