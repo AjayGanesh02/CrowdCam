@@ -2,8 +2,16 @@ import { ChevronRightIcon } from "@heroicons/react/16/solid";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { kv } from "@vercel/kv";
 
-const EventsPage = () => {
+type EventType = {
+  eventId: string;
+  name: string;
+  date: string;
+  location: string;
+};
+
+const EventsPage = ({ events }: { events: EventType[] }) => {
   const router = useRouter();
   useEffect(() => {
     console.log(router.query.type);
@@ -24,47 +32,54 @@ const EventsPage = () => {
 
           {/* event clickables */}
           <div className={"grid grid-cols-1 lg:grid-cols-2 place-items-center"}>
-            <div
-              className={
-                "border border-gray-700 mt-10 w-full max-w-96 rounded-md p-2"
-              }
-              onClick={() => {
-                if (router.query.type == "query") {
-                  router.push("/events/SpartaHacks9/query");
-                } else {
-                  router.push("/events/SpartaHacks9/upload");
+            {events.map((event) => (
+              <div
+                className={
+                  "border border-gray-700 mt-10 w-full max-w-96 rounded-md p-2"
                 }
-              }}
-            >
-              <div className="absolute rounded-3xl h-8 w-8 text-xs text-[#292F36] bg-[#BFD7FF]">
-                <div className="flex w-full h-full m-auto">
-                  <div className="m-auto font-semibold">1/27</div>
+                onClick={() => {
+                  if (router.query.type == "query") {
+                    router.push(`/events/${event.eventId}/query`);
+                  } else {
+                    router.push(`/events/${event.eventId}/upload`);
+                  }
+                }}
+              >
+                <div className="absolute rounded-3xl h-8 w-8 text-xs text-[#292F36] bg-[#BFD7FF]">
+                  <div className="flex w-full h-full m-auto">
+                    <div className="m-auto font-semibold">{event.date}</div>
+                  </div>
                 </div>
-              </div>
-              <div className={"flex p-3 items-center justify-center w-full"}>
-                <div className={"flex-shrink-0"}>
-                  <img
-                    className={"h-16 w-16 rounded-md"}
-                    src="//d112y698adiu2z.cloudfront.net/photos/production/challenge_thumbnails/002/716/391/datas/medium_square.png"
-                    alt=""
+                <div className={"flex p-3 items-center justify-center w-full"}>
+                  <div className={"flex-shrink-0"}>
+                    <img
+                      className={"h-16 w-16 rounded-md"}
+                      src="//d112y698adiu2z.cloudfront.net/photos/production/challenge_thumbnails/002/716/391/datas/medium_square.png"
+                      alt=""
+                    />
+                  </div>
+                  <div className={"ml-4 mr-auto"}>
+                    <p className={"text-xl text-[#BFD7FF] font-semibold"}>
+                      {event.name}
+                    </p>
+                    <p className={"text-sm text-blue-400"}>{event.location}</p>
+                  </div>
+                  <ChevronRightIcon
+                    className={"w-8 h-8 text-[#BFD7FF] flex-shrink-0"}
                   />
                 </div>
-                <div className={"ml-4 mr-auto"}>
-                  <p className={"text-xl text-[#BFD7FF] font-semibold"}>
-                    Sparta Hacks 9
-                  </p>
-                  <p className={"text-sm text-blue-400"}>East Lansing</p>
-                </div>
-                <ChevronRightIcon
-                  className={"w-8 h-8 text-[#BFD7FF] flex-shrink-0"}
-                />
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
     </main>
   );
+};
+
+export const getServerSideProps = async () => {
+  const events = await kv.json.get("events");
+  return { props: { events } };
 };
 
 export default EventsPage;

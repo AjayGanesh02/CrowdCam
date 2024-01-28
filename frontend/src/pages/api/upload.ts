@@ -63,8 +63,6 @@ export default async function handler(
       })
     );
 
-    return res.status(200).json({ message: "finished uploading" });
-
     async function uploadToS3(bucket: string, filepath: string, key: string) {
       const fileBuf = fs.readFileSync(filepath);
       const params = {
@@ -148,5 +146,5 @@ export default async function handler(
       }
     }
   });
-  return res.send({ message: "uploaded" });
+  return res.status(200).json({ message: "finished uploading" });
 }

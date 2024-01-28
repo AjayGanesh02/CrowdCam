@@ -13,6 +13,7 @@
     "@aws-sdk/client-s3": "^3.501.0",
     "@heroicons/react": "^2.1.1",
     "@material-tailwind/react": "^2.1.8",
+    "@vercel/kv": "^1.0.1",
     "aws-sdk": "^2.1545.0",
     "file-saver": "^2.0.5",
     "formidable": "^3.5.1",
