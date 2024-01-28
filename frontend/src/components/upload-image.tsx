@@ -1,12 +1,24 @@
 // clone this ui: https://combinepdf.com/
-import {FileUploader} from "react-drag-drop-files";
-import {useState} from "react";
+import { FileUploader } from "react-drag-drop-files";
+import { useState } from "react";
 
-const ImageUpload = ({ search, begun, setter }: { search: boolean; begun: any, setter: any }) => {
-
+const ImageUpload = ({
+  search,
+  begun,
+  setter,
+  eventId,
+}: {
+  search: boolean;
+  begun: any;
+  setter: any;
+  eventId: string;
+}) => {
   const [submitted, setSubmitted] = useState(false);
   const handleFileUpload = async (files: any) => {
     const formData = new FormData();
+
+    formData.append("eventId", eventId);
+
     for (let i = 0; i < files.length; i++) {
       formData.append("files", files[i]);
     }
@@ -34,7 +46,7 @@ const ImageUpload = ({ search, begun, setter }: { search: boolean; begun: any, s
         <FileUploader
           handleChange={(files: any) => {
             handleFileUpload(Object.values(files));
-            setSubmitted(true)
+            setSubmitted(true);
             begun();
           }}
           name="file"

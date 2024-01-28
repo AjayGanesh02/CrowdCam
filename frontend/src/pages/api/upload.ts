@@ -46,7 +46,7 @@ export default async function handler(
 
     const client = new S3Client(creds);
     const rekogclient = new RekognitionClient(creds);
-    const eventid = "SpartaHacks9";
+    const eventid = fields["eventId"][0];
     const filearray = files["files"];
     const bucket = "crowdcamimages";
 

@@ -25,35 +25,26 @@ const creds = {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const form = formidable({});
-  form.parse(req, async (err, _fields, files) => {
+  form.parse(req, async (err, fields, files) => {
     if (err) {
       return res.status(500).json({ message: err.message });
     }
-    console.log(`parsed ${JSON.stringify(files)}`);
 
     const parsed = files["files"]![0];
+    const eventId = fields["eventId"][0];
+    console.log(`parsed ${JSON.stringify(files)} for ${eventId}`);
 
     const rekogclient = new RekognitionClient(creds);
 
     const results = await rekogclient.send(
       new SearchFacesByImageCommand({
-        CollectionId: "SpartaHacks9",
+        CollectionId: eventId,
         Image: {
           Bytes: fs.readFileSync(parsed.filepath),
         },
       })
     );
 
-    // const UserIds = results.FaceMatches?.map((match) => {
-    //   return match.Face.ExternalImageId;
-    // });
-    // res.json({
-    //   matches: await rekogclient.send(
-    //     new ListFacesCommand({
-    //       CollectionId: "SpartaHacks9",
-    //       UserId: JSON.stringify(UserIds),
-    //     })
-    //   ),
     const matches =
       results.FaceMatches?.map((match) => {
         return `https://crowdcamimages.s3.amazonaws.com/${match.Face
