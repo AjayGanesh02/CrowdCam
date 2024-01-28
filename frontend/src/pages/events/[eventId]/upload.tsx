@@ -1,8 +1,8 @@
-import ImageUploadButton from "@/components/upload-image";
-import { useRouter } from "next/router";
-import LoadingIcons from "react-loading-icons";
-import { useState } from "react";
 import ImageUpload from "@/components/upload-image";
+import ImageUploadButton from "@/components/upload-image";
+import LoadingIcons from "react-loading-icons";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 const EventUploadPage = () => {
   const router = useRouter();

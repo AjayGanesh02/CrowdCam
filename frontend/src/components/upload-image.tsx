@@ -1,7 +1,7 @@
 // clone this ui: https://combinepdf.com/
 import { FileUploader } from "react-drag-drop-files";
-import { useState } from "react";
 import LoadingIcons from "react-loading-icons";
+import { useState } from "react";
 const ImageUpload = ({
   search,
   begun,
@@ -14,7 +14,6 @@ const ImageUpload = ({
   eventId: string;
 }) => {
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const handleFileUpload = async (files: any) => {
     const formData = new FormData();
 
@@ -57,7 +56,6 @@ const ImageUpload = ({
         <FileUploader
           handleChange={(files: any) => {
             handleFileUpload(Object.values(files));
-            setSubmitted(true);
             setLoading(true);
             begun();
           }}
@@ -65,7 +63,6 @@ const ImageUpload = ({
           types={["JPG", "PNG", "JPEG"]}
           multiple={true}
           label="Upload or Drop Photos"
-          disabled={submitted}
         />
       </div>
       {/*<input type="file" name="files" multiple onChange={handleFileUpload}/>*/}
