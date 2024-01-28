@@ -4,12 +4,17 @@ import {
   IndexFacesCommand,
   ListCollectionsCommand,
   CreateCollectionCommand,
+  ListUsersCommand,
+  AssociateFacesCommand,
   S3Object,
+  FaceRecord,
+  CreateUserCommand,
 } from "@aws-sdk/client-rekognition";
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable, { formidable } from "formidable";
+import formidable from "formidable";
 import fs from "fs";
 import { S3ObjectMetadata } from "aws-sdk/clients/s3control";
+import { createSecureServer } from "http2";
 
 // each uploaded image
 // index it for an array of face objects
@@ -59,16 +64,80 @@ export default async function handler(
     (filearray || []).forEach(async (file) => {
         const filekey = `${eventid}/${file.newFilename}${file.originalFilename}`
         await uploadToS3(bucket, file.filepath, filekey);
-        const FaceRecords = await indexFaces(bucket, { Bucket: bucket, Name: filekey})
+        const faceRecords = await indexFaces(bucket, { Bucket: bucket, Name: filekey})
+        const faceIds = faceRecords?.map((faceRecord) => {return faceRecord.Face?.FaceId ?? "FUCKYOU"});
+        if (!faceIds) return;
+
+        const userIds = await listUsers(eventid);
+
+        if (!userIds) {
+            await Promise.all(faceIds.map((faceId) => {
+                return createUser(eventid, faceId);
+            }));
+        } else {
+            let assocReturns = await Promise.all(userIds.map((userId) => {
+                return associateFaces(eventid, userId, faceIds);
+            }));
+            assocReturns = assocReturns.filter(element => element !== undefined)!;
+
+            let unassocFaceIds: Set<string> = new Set();
+            for (const { UnsuccessfulFaceAssociations } of assocReturns) {
+                for (const failedAssoc of UnsuccessfulFaceAssociations) {
+                    unassocFaceIds.add(failedAssoc.FaceId);
+                }
+            }
+
+            await Promise.all(Array.from(unassocFaceIds).map((faceId) => {
+                return createUser(eventid, faceId);
+            }));
+        }
         // get list of users in collection
         // for each user, try to associate faces to users, using unsuccessfulassociates for the next user
         // create new users for each face left after running through all users
     });
 
+    async function createUser(CollectionId: string, UserId: string) {
+        try {
+            await rekogclient.send(new CreateUserCommand({CollectionId, UserId}));
+        } catch (error) {
+            console.error('Error creating user:', error)
+        }
+    }
 
+    async function associateFaces(CollectionId: string, UserId: string, FaceIds: string[]) {
+        try {
+            const params = {
+                CollectionId, UserId, FaceIds
+            }
+            return await rekogclient.send(new AssociateFacesCommand(params));
+        } catch (error) {
+            console.error("Error associating faces:", error)
+        }
+    }
 
+    async function listUsers(CollectionId: string) {
+        try {
+            // Execute the ListFaces command to get a list of users in the collection
+            const data = await rekogclient.send(new ListUsersCommand({
+                CollectionId,
+            }));
+        
+            // Log the list of faces
+            if (data.Users && data.Users.length > 0) {
+              const userIds = data.Users.map((user) => user.UserId ?? "WHEREISYOURUSERID");
+              console.log('Users in collection:', userIds);
+              return userIds;
+            } else {
+              console.log('No users found in the collection.');
+              return [];
+            }
+          } catch (error) {
+            // Log any errors that occur during the operation
+            console.error('Error listing faces in collection:', error);
+          }
+    }
 
-    async function uploadToS3(bucket:string, filepath: string, key: string){
+    async function uploadToS3(bucket:string, filepath: string, key: string) {
         const fileBuf = fs.readFileSync(filepath);
         const params = {
           Bucket: bucket,
