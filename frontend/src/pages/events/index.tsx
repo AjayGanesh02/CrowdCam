@@ -20,7 +20,7 @@ const EventsPage = () => {
 
 
           {/* event clickable */}
-          <div className={"border border-gray-700 w-auto mt-10 rounded-md p-2"}
+          <div className={"border border-gray-700 w-96 mt-10 rounded-md p-2"}
                onClick={() => {router.push("/events/spartahack9")}}>
             <div className="absolute rounded-3xl h-8 w-8 text-xs text-[#292F36] bg-[#BFD7FF]">
               <div className="flex w-full h-full m-auto">
