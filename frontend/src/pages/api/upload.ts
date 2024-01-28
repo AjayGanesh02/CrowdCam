@@ -54,7 +54,7 @@ export default async function handler(
     const bucket = "crowdcamimages";
 
     await checkAndCreateCollection(eventid);
-    console.log(filearray);
+    // console.log(filearray);
 
     (filearray || []).forEach(async (file) => {
       const filekey = `${file.newFilename}${file.originalFilename}`;
@@ -71,18 +71,21 @@ export default async function handler(
       const userIds = await listUsers(eventid);
 
       if (!userIds) {
+        console.log("Creating new user for each face found")
         await Promise.all(
           faceIds.map((faceId) => {
             return createUser(eventid, faceId);
           })
         );
       } else {
+        console.log("Matching face with existing users")
         let assocReturns = await Promise.all(
           userIds.map((userId) => {
             return associateFaces(eventid, userId, faceIds);
           })
         );
         assocReturns = assocReturns.filter((element) => element !== undefined)!;
+        console.log(assocReturns);
 
         let unassocFaceIds: Set<string> = new Set();
         for (const { UnsuccessfulFaceAssociations } of assocReturns) {
@@ -104,6 +107,7 @@ export default async function handler(
 
     async function createUser(CollectionId: string, UserId: string) {
       try {
+        console.log(`Creating user: ${UserId} in ${CollectionId}`);
         await rekogclient.send(new CreateUserCommand({ CollectionId, UserId }));
       } catch (error) {
         console.error("Error creating user:", error);
@@ -115,16 +119,17 @@ export default async function handler(
       UserId: string,
       FaceIds: string[]
     ) {
-      try {
-        const params = {
-          CollectionId,
-          UserId,
-          FaceIds,
-        };
-        return await rekogclient.send(new AssociateFacesCommand(params));
-      } catch (error) {
-        console.error("Error associating faces:", error);
-      }
+        console.log("Associating for", UserId, FaceIds)
+        try {
+            const params = {
+                CollectionId,
+                UserId,
+                FaceIds,
+            };
+            return await rekogclient.send(new AssociateFacesCommand(params));
+        } catch (error) {
+            console.error("Error associating faces:", error);
+        }
     }
 
     async function listUsers(CollectionId: string) {
@@ -141,11 +146,11 @@ export default async function handler(
           const userIds = data.Users.map(
             (user) => user.UserId ?? "WHEREISYOURUSERID"
           );
-          console.log("Users in collection:", userIds);
+          console.log(`Users in collection ${CollectionId}:`, userIds);
           return userIds;
         } else {
           console.log("No users found in the collection.");
-          return [];
+          return;
         }
       } catch (error) {
         // Log any errors that occur during the operation
