@@ -28,7 +28,7 @@ const QueryPage = () => {
         {
           queryResults.length == 0 ? (
             <div>
-              <p className={"text-white my-8"}>
+              <p className={"text-white my-8 px-4"}>
                 We don&apos;t have an image for you. Please upload one!
               </p>
               <ImageUpload

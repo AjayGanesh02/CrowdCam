@@ -24,7 +24,7 @@ const EventsPage = () => {
 
 
           {/* event clickable */}
-          <div className={"border border-gray-700 w-96 mt-10 rounded-md p-2"}
+          <div className={"border border-gray-700 max-w-96 mt-10 rounded-md p-2"}
                onClick={() => {
                  if (router.query.type == "query") {
                    router.push("/events/spartahack9/query")

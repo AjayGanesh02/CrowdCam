@@ -46,7 +46,7 @@ const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
           name="file"
           types={["JPG", "PNG", "JPEG"]}
           multiple={true}
-          label="Upload or Drop Photos Here"
+          label="Upload or Drop Photos"
         />
       </div>
       {/*<input type="file" name="files" multiple onChange={handleFileUpload}/>*/}
