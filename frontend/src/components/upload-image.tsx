@@ -1,6 +1,6 @@
 // clone this ui: https://combinepdf.com/
 
-import {FileUploader} from "react-drag-drop-files";
+import { FileUploader } from "react-drag-drop-files";
 
 const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
   const handleFileUpload = async (files: any) => {
@@ -24,10 +24,8 @@ const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
       });
 
       if (response.ok) {
-        if (search) {
-          var res = await response.json();
-          setter(res);
-        }
+        var res = await response.json();
+        setter(res);
       } else {
         console.error("Error uploading files:", response.statusText);
       }

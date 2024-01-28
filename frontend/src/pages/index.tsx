@@ -1,11 +1,8 @@
 import Image from "next/image";
-import ImageUpload from "@/components/upload-image";
 import Logo from "../../public/logo.svg";
-import {useRouter} from "next/router";
-import query from "@/pages/events/[eventId]/query";
+import { useRouter } from "next/router";
 
 export default function Home() {
-
   const router = useRouter();
 
   return (
@@ -33,16 +30,24 @@ export default function Home() {
           </p>
           <div className="w-full">
             <button
-              className={"text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 mt-36 text-lg"}
-              onClick={() => {router.push({pathname: '/events', query: {type: "query"}})}}
+              className={
+                "text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 mt-36 text-lg"
+              }
+              onClick={() => {
+                router.push({ pathname: "/events", query: { type: "query" } });
+              }}
             >
               Find Yourself
             </button>
           </div>
           <div>
             <button
-              className={"text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 text-lg mt-4"}
-              onClick={() => {router.push({pathname: '/events', query: {type: "upload"}})}}
+              className={
+                "text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 text-lg mt-4"
+              }
+              onClick={() => {
+                router.push({ pathname: "/events", query: { type: "upload" } });
+              }}
             >
               Help Others
             </button>

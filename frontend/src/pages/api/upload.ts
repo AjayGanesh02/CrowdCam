@@ -52,7 +52,7 @@ export default async function handler(
 
     await checkAndCreateCollection(eventid);
 
-    await Promise.all(
+    return await Promise.all(
       filearray.map(async (file) => {
         const filekey = `${file.newFilename}${file.originalFilename}`;
         await uploadToS3(bucket, file.filepath, filekey);
