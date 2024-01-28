@@ -1,10 +1,14 @@
 import {ChevronRightIcon} from "@heroicons/react/16/solid";
 import {MagnifyingGlassIcon} from "@heroicons/react/24/outline";
 import {useRouter} from "next/router";
+import {useEffect} from "react";
 
 const EventsPage = () => {
 
   const router = useRouter();
+  useEffect(() => {
+    console.log(router.query.type)
+  }, [router])
 
   return (
     <main className={"h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36]"}>
@@ -21,7 +25,14 @@ const EventsPage = () => {
 
           {/* event clickable */}
           <div className={"border border-gray-700 w-96 mt-10 rounded-md p-2"}
-               onClick={() => {router.push("/events/spartahack9")}}>
+               onClick={() => {
+                 if (router.query.type == "query") {
+                   router.push("/events/spartahack9/query")
+                 } else {
+                   router.push("/events/spartahack9/upload")
+                 }
+             }
+          }>
             <div className="absolute rounded-3xl h-8 w-8 text-xs text-[#292F36] bg-[#BFD7FF]">
               <div className="flex w-full h-full m-auto">
                 <div className="m-auto font-semibold">
