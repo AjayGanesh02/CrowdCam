@@ -1,22 +1,19 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  RekognitionClient,
+  IndexFacesCommand,
+  ListCollectionsCommand,
+  CreateCollectionCommand,
+} from "@aws-sdk/client-rekognition";
 import { NextApiRequest, NextApiResponse } from "next";
 import { formidable } from "formidable";
 import fs from "fs";
 
-// export const main = async () => {
-//   const command = new PutObjectCommand({
-//     Bucket: "test-bucket",
-//     Key: "hello-s3.txt",
-//     Body: "Hello S3!",
-//   });
-
-//   try {
-//     const response = await client.send(command);
-//     console.log(response);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
+// each uploaded image
+// index it for an array of face ids
+// foreach existing user id in the collection run associate faces on the return value of the index
+// repeat for all unsuccessfulfaceassociations (use reasons) - parse into normal array of faceids and run against next userid in collection
+// at the end, array of userids remaining, create a new user for each one
 
 type ResponseData = {
   message: string;
@@ -24,10 +21,15 @@ type ResponseData = {
 
 export const config = {
   api: {
-    // bodyParser: {
-    //     sizeLimit: '10mb'
-    // }
     bodyParser: false,
+  },
+};
+
+const creds = {
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
   },
 };
 
@@ -36,30 +38,23 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   const form = formidable({});
-  // await new Promise((resolve, reject) => {
-  form.parse(request, async (err, _fields, files) => {
+  form.parse(request, async (err, fields, files) => {
     if (err) {
       return res.status(500).json({ message: err.message });
     }
     console.log(`parsed ${JSON.stringify(files)}`);
-    const client = new S3Client({
-      region: process.env.AWS_REGION,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-      },
-    });
-
+    const client = new S3Client(creds);
+    const eventid = "SpartaHacks9";
     const filearray = files["files"];
     console.log(filearray);
-    await Promise.all(
+    const uploaded = await Promise.all(
       (filearray || []).map(async (file) => {
         console.log("file 1: " + file.filepath);
         const fileStream = fs.createReadStream(file.filepath);
 
         const params = {
           Bucket: "arn:aws:s3:::crowdcamimages",
-          Key: `uploads/${file.newFilename}`,
+          Key: `${eventid}/${file.newFilename}`,
           Body: fileStream,
         };
 
@@ -68,34 +63,19 @@ export default async function handler(
         return client.send(command);
       })
     );
+
+    const rekogclient = new RekognitionClient(creds);
+
+    const find = new ListCollectionsCommand({});
+
+    const { CollectionIds } = await rekogclient.send(find);
+
+    const create = new CreateCollectionCommand({
+      CollectionId: eventid,
+    });
+
+    await rekogclient.send(create);
+
     res.status(200).send({ message: "uploaded" });
-    // } catch (error) {
-    //   // Handle the error
-    // }
-    // }
   });
 }
-
-// const { filename, contentType, eventId } = await request.json();
-// res.status(200).json({message: "ur mom"});
-
-// try {
-//     const client = new S3Client({ region: process.env.AWS_REGION });
-//     // const { url, fields } = await createPresignedPost(client, {
-//     //   Bucket: process.env.AWS_BUCKET_NAME || "",
-//     //   Key: Date.now() + "-" + eventId,
-//     //   Conditions: [
-//     //     ["content-length-range", 0, 10485760], // up to 10 MB
-//     //     ["starts-with", "$Content-Type", contentType],
-//     //   ],
-//     //   Fields: {
-//     //     acl: "public-read",
-//     //     "Content-Type": contentType,
-//     //   },
-//     //   Expires: 600, // Seconds before the presigned post expires. 3600 by default.
-//     // });
-
-//     // return Response.json({ url, fields });
-// } catch (error: any) {
-//     return Response.json({ error: error.message });
-// }
