@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import ImageUpload from "@/components/upload-image";
 import { useProfileImage } from "@/contexts/ProfileContext";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const QueryPage = () => {
-
   const [queryResults, setQueryResults] = useState<string[]>([]);
-  const [ active, setActive ] = useState("");
+  const [active, setActive] = useState("");
 
   useEffect(() => {
-    if(queryResults.length > 0) {
+    if (queryResults.length > 0) {
       setActive(queryResults[0]);
     }
   }, [queryResults]);
@@ -25,46 +25,44 @@ const QueryPage = () => {
         <p>Profile Page</p>
       </div>
       <div className={"mt-12"}>
-        {
-          queryResults.length == 0 ? (
-            <div>
-              <p className={"text-white my-8"}>
-                We don&apos;t have an image for you. Please upload one!
-              </p>
-              <ImageUpload
-                search={true}
-                setter={(reply: any) => {
-                  setQueryResults(reply.matches)}
-                }
-              />
-            </div>
-          )
-            :
-            <div className={"flex px-10"}>
-              <div className="grid gap-4 mx-auto">
-
-                <div className="flex items-center max-h-[480px]">
-                  <img
-                    className="rounded-lg object-contain mx-auto h-[480px] sm:h-[480px]"
-                    src={active}
-                    alt=""
-                  />
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
-                  {queryResults?.map((imgelink, index) => (
-                    <div key={index}>
-                      <img
-                        onClick={() => setActive(imgelink)}
-                        src={imgelink}
-                        className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
-                        alt="gallery-image"
-                      />
-                    </div>
-                  ))}
-                </div>
+        {queryResults.length == 0 ? (
+          <div>
+            <p className={"text-white my-8"}>
+              We don&apos;t have an image for you. Please upload one!
+            </p>
+            <ImageUpload
+              search={true}
+              setter={(reply: any) => {
+                setQueryResults(reply.matches);
+              }}
+            />
+          </div>
+        ) : (
+          <div className={"flex px-10"}>
+            <div className="grid gap-4 mx-auto">
+              <div className="flex items-center max-h-[480px]">
+                <img
+                  className="rounded-lg object-contain mx-auto h-[480px] sm:h-[480px]"
+                  src={active}
+                  alt=""
+                />
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
+                {queryResults?.map((imgelink, index) => (
+                  <div key={index}>
+                    <Image
+                      onClick={() => setActive(imgelink)}
+                      src={imgelink}
+                      className="h-20 max-w-full cursor-pointer rounded-lg object-cover object-center"
+                      alt="gallery-image"
+                      width=
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-        }
+          </div>
+        )}
       </div>
     </main>
   );
