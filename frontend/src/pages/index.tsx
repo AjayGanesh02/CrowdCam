@@ -31,7 +31,7 @@ export default function Home() {
           <div className="w-full">
             <button
               className={
-                "text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 mt-36 text-lg"
+                "text-[#BFD7FF] border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl hover:cursor-pointer hover:bg-opacity-40 hover:bg-[#292F36] mt-36 text-lg"
               }
               onClick={() => {
                 router.push({ pathname: "/events", query: { type: "query" } });
@@ -43,7 +43,7 @@ export default function Home() {
           <div>
             <button
               className={
-                "text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 text-lg mt-4"
+                "text-[#BFD7FF] border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl hover:cursor-pointer hover:bg-opacity-40 hover:bg-[#292F36] text-lg mt-4"
               }
               onClick={() => {
                 router.push({ pathname: "/events", query: { type: "upload" } });
