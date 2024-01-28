@@ -181,7 +181,6 @@ const EventUploadPage = () => {
               Submit
             </button>
           </div>
-
         </form>
       </div>
     </main>

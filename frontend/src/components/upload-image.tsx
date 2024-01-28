@@ -2,6 +2,9 @@
 import { FileUploader } from "react-drag-drop-files";
 import LoadingIcons from "react-loading-icons";
 import { useState } from "react";
+
+const fileTypes = ["JPG", "PNG", "JPEG"];
+
 const ImageUpload = ({
   search,
   begun,
@@ -60,7 +63,7 @@ const ImageUpload = ({
             begun();
           }}
           name="file"
-          types={["JPG", "PNG", "JPEG"]}
+          types={fileTypes}
           multiple={true}
           label="Upload or Drop Photos"
         />
