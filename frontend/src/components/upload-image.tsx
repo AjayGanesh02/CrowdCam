@@ -1,9 +1,11 @@
 // clone this ui: https://combinepdf.com/
 import {FileUploader} from "react-drag-drop-files";
 import {useState} from "react";
+import LoadingIcons from "react-loading-icons";
 
 const ImageUpload = ({ search, begun, setter }: { search: boolean; begun: any, setter: any }) => {
 
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const handleFileUpload = async (files: any) => {
     const formData = new FormData();
@@ -20,6 +22,7 @@ const ImageUpload = ({ search, begun, setter }: { search: boolean; begun: any, s
       if (response.ok) {
         var res = await response.json();
         setter(res);
+        setLoading(false)
       } else {
         console.error("Error uploading files:", response.statusText);
       }
@@ -30,11 +33,18 @@ const ImageUpload = ({ search, begun, setter }: { search: boolean; begun: any, s
 
   return (
     <form encType="multipart/form-data flex">
-      <div className={"h-48 justify-center max-w-96 mx-auto"}>
+      <div className={"h-48 justify-center max-w-96 mx-auto relative"}>
+        {
+          loading &&
+          <div className={"absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"}>
+              <LoadingIcons.TailSpin/>
+          </div>
+        }
         <FileUploader
           handleChange={(files: any) => {
             handleFileUpload(Object.values(files));
             setSubmitted(true)
+            setLoading(true);
             begun();
           }}
           name="file"

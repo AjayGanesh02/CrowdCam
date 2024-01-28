@@ -25,21 +25,21 @@ const QueryPage = () => {
       <div className={"mt-12"}>
         {
           queryResults.length == 0 ? (
-            <div>
-              <p className={"text-white my-8 px-4"}>
-                We don&apos;t have an image for you. Please upload one!
-              </p>
-              <ImageUpload
-                search={true}
-                begun={() => {
-
-                }}
-                setter={(reply: any) => {
-                  setQueryResults(reply.matches)}
-                }
-              />
-            </div>
-          )
+              <div>
+                <p className={"text-white my-8 px-4"}>
+                  We don&apos;t have an image for you. Please upload one!
+                </p>
+                <ImageUpload
+                  search={true}
+                  begun={() => {
+                  }}
+                  setter={(reply: any) => {
+                    setQueryResults(reply.matches)
+                  }
+                  }
+                />
+              </div>
+            )
             :
             <>
               <div className={"flex px-10 pb-20"}>

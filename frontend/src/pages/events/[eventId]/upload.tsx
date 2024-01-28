@@ -1,8 +1,9 @@
 import ImageUploadButton from "@/components/upload-image";
 import {useRouter} from "next/router";
+import LoadingIcons from 'react-loading-icons'
+import {useState} from "react";
 
 const EventUploadPage = () => {
-
   const router = useRouter();
 
   return (
@@ -14,7 +15,8 @@ const EventUploadPage = () => {
           </p>
         </div>
         <ImageUploadButton search={false}
-                           begun={() => {}}
+                           begun={() => {
+                           }}
                            setter={(url: string) => {
                              console.log("SETTER CALLED")
                              router.push(`/events/${router.query.eventId}/success`)
