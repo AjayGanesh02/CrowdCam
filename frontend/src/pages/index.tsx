@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <main
       className={
-        "h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36]"
+        "min-h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36]"
       }
     >
       <div className={"flex items-center text-center px-4 sm:px-10"}>

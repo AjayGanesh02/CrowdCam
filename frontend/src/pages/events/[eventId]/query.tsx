@@ -18,7 +18,7 @@ const QueryPage = () => {
   return (
     <main
       className={
-        "h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36] text-center"
+        "min-h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36] text-center"
       }
     >
       <div className={"text-3xl pt-8 px-8 text-[#BFD7FF] font-bold"}>
