@@ -1,17 +1,33 @@
 import ImageUploadButton from "@/components/upload-image";
+import {useRouter} from "next/router";
 
-const EventUploadPage = () => {
+const SuccessPage = () => {
+  const router = useRouter();
+
   return (
     <main className={"min-h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36]"}>
-      <div className={"h-screen py-auto px-4 grid grid-cols-1 items-center"}>
-        <div className={"text-3xl py-4 text-[#BFD7FF] font-bold text-center"}>
+      <div className={"py-auto px-4 pt-32"}>
+        <div className={"text-3xl py-4 text-[#BFD7FF] font-bold text-center pb-10 px-8"}>
           <p>
-            Thanks for uploading!
+            Thanks for uploading your photo(s)! We&apos;ll let you know if we find a match.
           </p>
+
+          <div className="w-full">
+            <button
+              className={
+                "text-white border w-full max-w-80 mx-auto py-4 border-[#292f36] rounded-xl bg-[#292F36] bg-opacity-40 mt-36 text-lg"
+              }
+              onClick={() => {
+                router.push({pathname: "/"});
+              }}
+            >
+              Back to Home
+            </button>
+          </div>
         </div>
       </div>
     </main>
   )
 }
 
-export default EventUploadPage
+export default SuccessPage
