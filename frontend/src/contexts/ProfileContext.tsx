@@ -1,11 +1,11 @@
 import { createContext, useContext, useState } from 'react';
 
-const ProfileImageContext: any = createContext();
+const ProfileImageContext: any = createContext(null);
 
 export const ProfileImageProvider = ({ children }: any) => {
   const [profileImageUrl, setProfileImageUrl] = useState(null);
 
-  const setProfileImage = (url: any) => {
+  const setProfileImage = (url: string) => {
     setProfileImageUrl(url);
   };
 
