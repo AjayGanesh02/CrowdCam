@@ -1,6 +1,10 @@
 import ImageUploadButton from "@/components/upload-image";
+import {useRouter} from "next/router";
 
 const EventUploadPage = () => {
+
+  const router = useRouter();
+
   return (
     <main className={"min-h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36]"}>
       <div className={"pt-8 px-4"}>
@@ -9,7 +13,12 @@ const EventUploadPage = () => {
             Upload Images Here
           </p>
         </div>
-        <ImageUploadButton search={false} setter={(url: string) => {}}/>
+        <ImageUploadButton search={false}
+                           begun={() => {}}
+                           setter={(url: string) => {
+                             console.log("SETTER CALLED")
+                             router.push(`/events/${router.query.eventId}/success`)
+                           }}/>
       </div>
     </main>
   )

@@ -1,18 +1,12 @@
 // clone this ui: https://combinepdf.com/
+import {FileUploader} from "react-drag-drop-files";
+import {useState} from "react";
 
-import { FileUploader } from "react-drag-drop-files";
+const ImageUpload = ({ search, begun, setter }: { search: boolean; begun: any, setter: any }) => {
 
-const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
+  const [submitted, setSubmitted] = useState(false);
   const handleFileUpload = async (files: any) => {
-    // e.preventDefault();
-
     const formData = new FormData();
-
-    // Assuming your file input has the "multiple" attribute
-    // for (let i = 0; i < e.target.files.length; i++) {
-    //   console.log(files[i])
-    //   formData.append("files", e.target.files[i]);
-    // }
     for (let i = 0; i < files.length; i++) {
       formData.append("files", files[i]);
     }
@@ -40,11 +34,14 @@ const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
         <FileUploader
           handleChange={(files: any) => {
             handleFileUpload(Object.values(files));
+            setSubmitted(true)
+            begun();
           }}
           name="file"
           types={["JPG", "PNG", "JPEG"]}
           multiple={true}
           label="Upload or Drop Photos"
+          disabled={submitted}
         />
       </div>
       {/*<input type="file" name="files" multiple onChange={handleFileUpload}/>*/}
