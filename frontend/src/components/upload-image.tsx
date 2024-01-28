@@ -1,6 +1,6 @@
 // clone this ui: https://combinepdf.com/
 
-const ImageUpload = (search: boolean, setter: (urls: string[]) => void) => {
+const ImageUpload = ({ search, setter }: { search: boolean; setter: any }) => {
   const handleFileUpload = async (e: any) => {
     e.preventDefault();
 
