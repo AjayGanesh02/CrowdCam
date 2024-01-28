@@ -26,9 +26,9 @@ const QueryPage = () => {
       <div className={"text-3xl pt-8 px-8 text-[#BFD7FF] font-bold"}>
         <p>Query {queryResults.length > 0 ? "Results" : "Page"}</p>
       </div>
-      <div className={"mt-12"}>
+      <div className={""}>
         {queryResults.length == 0 ? (
-          <div>
+          <div className={"mt-12"}>
             <p className={"text-white my-8 px-4"}>
               {prompt}
             </p>
@@ -36,7 +36,6 @@ const QueryPage = () => {
               search={true}
               begun={() => {}}
               setter={(reply: any) => {
-                console.log(reply);
                 if (reply.error) {
                   setPrompt(`${ reply.error }. Please try again.`);
                 }
@@ -53,7 +52,7 @@ const QueryPage = () => {
           </div>
         ) : (
           <>
-            <div className={"flex px-10 pb-20"}>
+            <div className={"flex px-10 pb-20 mt-4"}>
               <div className="grid gap-4 mx-auto">
                 <div className="flex items-center max-h-[480px]">
                   <img
@@ -85,6 +84,9 @@ const QueryPage = () => {
                       />
                     </div>
                   ))}
+                </div>
+                <div className={"text-gray-400"}>
+                  {queryResults?.length} Queries Found
                 </div>
               </div>
             </div>
