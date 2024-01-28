@@ -54,13 +54,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     //       UserId: JSON.stringify(UserIds),
     //     })
     //   ),
+    const matches =
+      results.FaceMatches?.map((match) => {
+        return `https://crowdcamimages.s3.amazonaws.com/${match.Face
+          ?.ExternalImageId!}`;
+      }) ?? [];
 
     return res.status(200).json({
-      matches:
-        results.FaceMatches?.map((match) => {
-          return `https://crowdcamimages.s3.amazonaws.com/${match.Face
-            ?.ExternalImageId!}`;
-        }) ?? [],
+      matches: matches,
+      error: matches.length == 0 ? "No Matches" : null,
     });
   });
 }
