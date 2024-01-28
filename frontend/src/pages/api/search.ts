@@ -56,10 +56,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     //   ),
 
     return res.status(200).json({
-      matches: results.FaceMatches?.map((match) => {
-        return `https://crowdcamimages.s3.amazonaws.com/${match.Face
-          ?.ExternalImageId!}`;
-      }),
+      matches:
+        results.FaceMatches?.map((match) => {
+          return `https://crowdcamimages.s3.amazonaws.com/${match.Face
+            ?.ExternalImageId!}`;
+        }) ?? [],
     });
   });
 }
