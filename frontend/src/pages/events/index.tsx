@@ -8,7 +8,7 @@ const EventsPage = () => {
 
   return (
     <main className={"h-screen overscroll-none bg-gradient-to-t from-black to-[#292F36]"}>
-      <div className={"flex"}>
+      <div className={"flex px-8"}>
         <div className={"mx-auto mt-8"}>
           <div className={"text-3xl pt-4 text-[#BFD7FF] font-bold flex"}>
             <p>
@@ -20,7 +20,7 @@ const EventsPage = () => {
 
 
           {/* event clickable */}
-          <div className={"border border-gray-700 w-96 mt-10 rounded-md p-2"}
+          <div className={"border border-gray-700 w-auto mt-10 rounded-md p-2"}
                onClick={() => {router.push("/events/spartahack9")}}>
             <div className="absolute rounded-3xl h-8 w-8 text-xs text-[#292F36] bg-[#BFD7FF]">
               <div className="flex w-full h-full m-auto">
@@ -30,7 +30,7 @@ const EventsPage = () => {
               </div>
             </div>
             <div className={"flex p-3 items-center justify-center w-full"}>
-              <div className={""}>
+              <div className={"flex-shrink-0"}>
                 <img className={"h-16 w-16 rounded-md"}
                   src="//d112y698adiu2z.cloudfront.net/photos/production/challenge_thumbnails/002/716/391/datas/medium_square.png" alt="" />
               </div>
@@ -42,7 +42,7 @@ const EventsPage = () => {
                   East Lansing
                 </p>
               </div>
-              <ChevronRightIcon className={"w-8 h-8 text-[#BFD7FF]"}/>
+              <ChevronRightIcon className={"w-8 h-8 text-[#BFD7FF] flex-shrink-0"}/>
             </div>
           </div>
         </div>
