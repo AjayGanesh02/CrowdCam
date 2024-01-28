@@ -56,4 +56,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       error: matches.length == 0 ? "No Matches" : null,
     });
   });
+  return;
 }

@@ -1,5 +1,8 @@
 import ImageUploadButton from "@/components/upload-image";
 import { useRouter } from "next/router";
+import LoadingIcons from "react-loading-icons";
+import { useState } from "react";
+import ImageUpload from "@/components/upload-image";
 
 const EventUploadPage = () => {
   const router = useRouter();
@@ -14,7 +17,7 @@ const EventUploadPage = () => {
         <div className={"text-3xl py-4 text-[#BFD7FF] font-bold text-center"}>
           <p>Upload Images Here</p>
         </div>
-        <ImageUploadButton
+        <ImageUpload
           search={false}
           begun={() => {}}
           setter={(url: string) => {
